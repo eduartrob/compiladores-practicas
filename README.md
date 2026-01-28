@@ -35,6 +35,17 @@ Extensión del analizador léxico para permitir que los identificadores:
 
 ---
 
+### Tarea Programa 3 - Tabla de Símbolos
+**Archivo:** `TareaPrograma3_221214.java`
+
+Extensión del analizador léxico que incluye una **Tabla de Símbolos**:
+- Precarga 20 palabras reservadas (`if`, `else`, `while`, `for`, `int`, `float`, etc.)
+- Inserta identificadores (sin duplicados)
+- Inserta números enteros y decimales
+- Muestra la tabla de símbolos al final
+
+---
+
 ## 🚀 Cómo ejecutar
 
 ```bash
@@ -45,6 +56,10 @@ java TareaPrograma1_221214
 # Tarea 2
 javac TareaPrograma2_221214.java
 java TareaPrograma2_221214
+
+# Tarea 3
+javac TareaPrograma3_221214.java
+java TareaPrograma3_221214
 ```
 
 ## 📊 Tabla de Transiciones
