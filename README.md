@@ -35,14 +35,20 @@ Extensión del analizador léxico para permitir que los identificadores:
 
 ---
 
-### Tarea Programa 3 - Tabla de Símbolos
-**Archivo:** `TareaPrograma3_221214.java`
+### Etapa 1 - Analizador Léxico Completo
+**Archivo:** `AnalizadorLexicoCompleto.java`
 
-Extensión del analizador léxico que incluye una **Tabla de Símbolos**:
-- Precarga 20 palabras reservadas (`if`, `else`, `while`, `for`, `int`, `float`, etc.)
-- Inserta identificadores (sin duplicados)
-- Inserta números enteros y decimales
-- Muestra la tabla de símbolos al final
+Analizador léxico completo que reconoce todos los tokens necesarios para un compilador:
+
+| Categoría | Tokens |
+|-----------|--------|
+| Palabras reservadas | `KEY_IF`, `KEY_THEN`, `KEY_ELSE`, `KEY_WHILE`, `KEY_FOR`, `KEY_DO`, `KEY_INT`, `KEY_FLOAT`, `KEY_STRING`, `KEY_DATE`, etc. |
+| Identificadores | `ID` |
+| Números | `NUM`, `NUM_FLOAT` |
+| Cadenas | `CADENA` |
+| Delimitadores | `FIN_SENTENCIA`, `INI_BLOQUE`, `FIN_BLOQUE`, `ABRE_PARENTESIS`, `CIERRA_PARENTESIS` |
+| Operadores matemáticos | `OPERA_SUMA`, `OPERA_RESTA`, `OPERA_MULT`, `OPERA_DIVID`, `ASIGNA` |
+| Operadores lógicos | `OPERA_AND`, `OPERA_OR`, `OPERA_NOT` |
 
 ---
 
@@ -60,6 +66,10 @@ java TareaPrograma2_221214
 # Tarea 3
 javac TareaPrograma3_221214.java
 java TareaPrograma3_221214
+
+# Etapa 1 - Analizador Léxico Completo
+javac AnalizadorLexicoCompleto.java
+java AnalizadorLexicoCompleto
 ```
 
 ## 📊 Tabla de Transiciones
