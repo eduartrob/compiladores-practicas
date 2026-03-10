@@ -1,9 +1,9 @@
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 
 class SimboloCompleto {
     int id;
@@ -39,7 +39,7 @@ class TokenCompleto {
     }
 }
 
-public class AnalizadorLexicoCompleto {
+class AnalizadorLexicoCompleto {
 
     private List<SimboloCompleto> tablaSimbolos;
     private int contadorId;
@@ -414,5 +414,488 @@ public class AnalizadorLexicoCompleto {
         lexer.mostrarTablaSimbolos();
 
         System.out.println("\nAnálisis léxico completado. Total de tokens: " + resultado.size());
+    }
+}
+
+
+// nodos del ast
+abstract class NodoAST {
+    public abstract String getValor();
+    
+// imprimir en consola
+    public abstract void imprimir(String prefijo, boolean esUltimo);
+}
+
+// hoja de id o num
+class NodoHoja extends NodoAST {
+    String tipo; 
+    String lexema;
+
+    public NodoHoja(String tipo, String lexema) {
+        this.tipo = tipo;
+        this.lexema = lexema;
+    }
+
+    @Override
+    public String getValor() {
+        return lexema;
+    }
+
+    @Override
+    public void imprimir(String prefijo, boolean esUltimo) {
+        System.out.println(prefijo + (esUltimo ? "└── " : "├── ") + tipo + "(" + lexema + ")");
+    }
+}
+
+// operacion matematica
+class NodoOperacion extends NodoAST {
+    String operador;
+    String tipoNodo; 
+    NodoAST izquierdo;
+    NodoAST derecho;
+
+    public NodoOperacion(String tipoNodo, String operador, NodoAST izquierdo, NodoAST derecho) {
+        this.tipoNodo = tipoNodo;
+        this.operador = operador;
+        this.izquierdo = izquierdo;
+        this.derecho = derecho;
+    }
+
+    @Override
+    public String getValor() {
+        return operador;
+    }
+
+    @Override
+    public void imprimir(String prefijo, boolean esUltimo) {
+        System.out.println(prefijo + (esUltimo ? "└── " : "├── ") + tipoNodo);
+        
+        String nuevoPrefijo = prefijo + (esUltimo ? "    " : "│   ");
+        
+// subarbol izquierdo
+        if (izquierdo != null) {
+            izquierdo.imprimir(nuevoPrefijo, false);
+        }
+        
+        System.out.println(nuevoPrefijo + "├── " + operador);
+        
+// subarbol derecho
+        if (derecho != null) {
+            derecho.imprimir(nuevoPrefijo, true);
+        }
+    }
+}
+
+// asignacion
+class NodoAsignacion extends NodoAST {
+    NodoHoja variable;
+    NodoAST expresion;
+
+    public NodoAsignacion(NodoHoja variable, NodoAST expresion) {
+        this.variable = variable;
+        this.expresion = expresion;
+    }
+
+    @Override
+    public String getValor() {
+        return "=";
+    }
+
+    @Override
+    public void imprimir(String prefijo, boolean esUltimo) {
+        System.out.println(prefijo + "ASIGNACIÓN ( = )");
+        variable.imprimir(prefijo + "    ", false);
+        expresion.imprimir(prefijo + "    ", true);
+    }
+}
+
+// analizador sintactico recursivo
+class Parser {
+    private List<TokenCompleto> tokens;
+    private int posicionActual;
+    
+    public Parser(List<TokenCompleto> tokens) {
+        this.tokens = tokens;
+        this.posicionActual = 0;
+    }
+    
+// obtener token actual
+    private TokenCompleto obtenerToken() {
+        if (posicionActual < tokens.size()) {
+            return tokens.get(posicionActual);
+        }
+        return new TokenCompleto("EOF", "");
+    }
+    
+// consumir token
+    private void consumir() {
+        posicionActual++;
+    }
+    
+// parseo de instruccion
+    public NodeAsignacionOExpresion parseInstruccion() {
+// verificamos asignacion
+        int inicio = posicionActual;
+        
+        if (obtenerToken().tipo.equals("ID")) {
+            TokenCompleto idVar = obtenerToken();
+            consumir(); 
+            
+            if (obtenerToken().tipo.equals("ASIGNA")) {
+                consumir(); 
+                
+// parseamos expresion
+                NodoAST expr = parseE(); 
+                
+// ignoramos fin bateria
+                if (obtenerToken().tipo.equals("FIN_SENTENCIA")) {
+                    consumir();
+                }
+                
+                return new NodeAsignacionOExpresion(
+                    new NodoAsignacion(new NodoHoja("id", idVar.lexema), expr)
+                );
+            }
+        }
+        
+// parseamos expresion
+        posicionActual = inicio;
+        NodoAST expr = parseE();
+        
+        if (obtenerToken().tipo.equals("FIN_SENTENCIA")) {
+            consumir();
+        }
+        
+        return new NodeAsignacionOExpresion(expr);
+    }
+
+// sumas y restas
+    private NodoAST parseE() {
+        NodoAST nodoIzq = parseT(); 
+        
+        while (obtenerToken().tipo.equals("OPERA_SUMA") || obtenerToken().tipo.equals("OPERA_RESTA")) {
+            TokenCompleto operador = obtenerToken();
+            consumir(); 
+            NodoAST nodoDer = parseT(); 
+            
+            nodoIzq = new NodoOperacion("E", operador.lexema, nodoIzq, nodoDer);
+        }
+        
+        return nodoIzq;
+    }
+    
+// mult y div
+    private NodoAST parseT() {
+        NodoAST nodoIzq = parseF(); 
+        
+        while (obtenerToken().tipo.equals("OPERA_MULT") || obtenerToken().tipo.equals("OPERA_DIVID")) {
+            TokenCompleto operador = obtenerToken();
+            consumir(); 
+            NodoAST nodoDer = parseF(); 
+            
+            nodoIzq = new NodoOperacion("T", operador.lexema, nodoIzq, nodoDer);
+        }
+        
+        return nodoIzq;
+    }
+    
+// id num y parentesis
+    private NodoAST parseF() {
+        TokenCompleto token = obtenerToken();
+        
+// caso id
+        if (token.tipo.equals("ID")) {
+            consumir();
+            return new NodoHoja("id", token.lexema);
+        }
+        
+// caso num
+        if (token.tipo.equals("NUM") || token.tipo.equals("NUM_FLOAT")) {
+            consumir();
+            return new NodoHoja("num", token.lexema);
+        }
+        
+// caso parentesis
+        if (token.tipo.equals("ABRE_PARENTESIS")) {
+            consumir(); 
+            NodoAST nodoExpr = parseE(); 
+            
+            if (obtenerToken().tipo.equals("CIERRA_PARENTESIS")) {
+                consumir(); 
+            } else {
+                System.err.println("Error de sintaxis: Falta paréntesis");
+            }
+
+            return nodoExpr;
+        }
+        
+        System.err.println("Error sintaxis");
+        consumir(); 
+        return new NodoHoja("ERR", "error");
+    }
+}
+
+// clase wrapper asignacion expresion
+class NodeAsignacionOExpresion {
+    NodoAsignacion asignacion;
+    NodoAST expresion;
+    
+    public NodeAsignacionOExpresion(NodoAsignacion asig) {
+        this.asignacion = asig;
+        this.expresion = null;
+    }
+    
+    public NodeAsignacionOExpresion(NodoAST expr) {
+        this.asignacion = null;
+        this.expresion = expr;
+    }
+    
+    public boolean esAsignacion() {
+        return asignacion != null;
+    }
+    
+    public NodoAST getRaizExpresion() {
+        return esAsignacion() ? asignacion.expresion : expresion;
+    }
+    
+    public void imprimir() {
+        if (esAsignacion()) {
+            asignacion.imprimir("", true);
+        } else {
+            System.out.println("EXPRESIÓN ( E )");
+            expresion.imprimir("    ", true);
+        }
+    }
+}
+
+
+// linea tabla codigo intermedio
+class PasoPila {
+    int paso;
+    String instruccion;
+    String estadoPila;
+    String explicacion;
+
+    public PasoPila(int paso, String instruccion, String estadoPila, String explicacion) {
+        this.paso = paso;
+        this.instruccion = instruccion;
+        this.estadoPila = estadoPila;
+        this.explicacion = explicacion;
+    }
+
+    public void imprimirFila() {
+        System.out.printf("| %-4d | %-12s | %-20s | %-50s\n", paso, instruccion, estadoPila, explicacion);
+    }
+}
+
+// generador de codigo intermedio
+class GeneradorCodigoPila {
+    private List<PasoPila> pasos;
+    private int contadorPasos;
+    private int contadorTemporales;
+    private List<String> pilaSimulada;
+
+    public GeneradorCodigoPila() {
+        pasos = new ArrayList<>();
+        contadorPasos = 1;
+        contadorTemporales = 1;
+        pilaSimulada = new ArrayList<>();
+    }
+
+// string de pila actual
+    private String getEstadoPila() {
+        if (pilaSimulada.isEmpty()) return "[]";
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < pilaSimulada.size(); i++) {
+            sb.append(pilaSimulada.get(i));
+            if (i < pilaSimulada.size() - 1) sb.append(", ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+// agregar paso
+    private void registrarPaso(String instruccion, String explicacion) {
+        pasos.add(new PasoPila(contadorPasos++, instruccion, getEstadoPila(), explicacion));
+    }
+
+// iniciar codigo para ast
+    public void generarCodigo(NodoAST raiz) {
+        pasos.clear();
+        contadorPasos = 1;
+        contadorTemporales = 1;
+        pilaSimulada.clear();
+        
+        recorridoPostOrden(raiz);
+        
+    }
+
+// generar codigo de pila
+    private void recorridoPostOrden(NodoAST nodo) {
+        if (nodo == null) return;
+
+// si es id o num
+        if (nodo instanceof NodoHoja) {
+            String valor = nodo.getValor();
+            pilaSimulada.add(valor); 
+            registrarPaso("PUSH " + valor, "Se mete el valor de " + valor);
+            return;
+        }
+
+// operacion
+        if (nodo instanceof NodoOperacion) {
+            NodoOperacion op = (NodoOperacion) nodo;
+            
+// hijo izquierdo
+            recorridoPostOrden(op.izquierdo);
+            
+// hijo derecho
+            recorridoPostOrden(op.derecho);
+            
+// aplicar operacion
+            aplicarOperacion(op.operador);
+            return;
+        }
+        
+// asignacion completa
+        if (nodo instanceof NodoAsignacion) {
+            NodoAsignacion asig = (NodoAsignacion) nodo;
+            
+// expresion
+            recorridoPostOrden(asig.expresion);
+            
+// asiga resultado
+            String variable = asig.variable.getValor();
+            String resultado = pilaSimulada.isEmpty() ? "error" : pilaSimulada.remove(pilaSimulada.size() - 1);
+            
+            registrarPaso("POP " + variable, "Se saca el resultado y se asigna a " + variable);
+            return;
+        }
+    }
+
+// sacar operandos y meter temporal
+    private void aplicarOperacion(String operador) {
+        if (pilaSimulada.size() < 2) {
+            System.err.println("Error de semántica: Pila mal formada para operación " + operador);
+            return;
+        }
+
+// inverse
+        String op2 = pilaSimulada.remove(pilaSimulada.size() - 1);
+        String op1 = pilaSimulada.remove(pilaSimulada.size() - 1);
+        
+        String instruccion = "";
+        String accion = "";
+        String tResult = "t" + contadorTemporales++;
+
+        switch (operador) {
+            case "+":
+                instruccion = "ADD";
+                accion = "suma y mete";
+                break;
+            case "-":
+                instruccion = "SUB";
+                accion = "resta y mete";
+                break;
+            case "*":
+                instruccion = "MUL";
+                accion = "multiplica y mete";
+                break;
+            case "/":
+                instruccion = "DIV";
+                accion = "divide y mete";
+                break;
+            default:
+                instruccion = "NOP";
+                accion = "opera";
+        }
+
+        pilaSimulada.add(tResult); 
+        
+        String explicacion = String.format("Se sacan %s y %s, se %s (%s)", op1, op2, accion, tResult);
+        registrarPaso(instruccion, explicacion);
+    }
+    
+// imprimir tabla
+    public void mostrarTablaCodigoIntermedio() {
+        System.out.println("\n╔══════════════════════════════════════════════════════════════════════════════════════════════════╗");
+        System.out.println("║                        TABLA DE CÓDIGO INTERMEDIO (MÁQUINA DE PILA)                              ║");
+        System.out.println("╠══════╦══════════════╦══════════════════════╦═════════════════════════════════════════════════════╣");
+        System.out.println("║ Paso ║ Instrucción  ║ Pila (Stack)         ║ Explicación                                         ║");
+        System.out.println("╠══════╬══════════════╬══════════════════════╬═════════════════════════════════════════════════════╣");
+        
+        for (PasoPila p : pasos) {
+            System.out.printf("║ %-4d ║ %-12s ║ %-20s ║ %-51s ║\n", p.paso, p.instruccion, p.estadoPila, p.explicacion);
+        }
+        
+        System.out.println("╚══════╩══════════════╩══════════════════════╩═════════════════════════════════════════════════════╝");
+    }
+}
+
+
+public class AnalizadorSintactico {
+
+    public static void procesarExpresion(String entrada) {
+        System.out.println("════════════════════════════════════════════════════════════════════════════════════════════════════");
+        System.out.println("                         EVALUANDO EXPRESIÓN                              ");
+        System.out.println("════════════════════════════════════════════════════════════════════════════════════════════════════");
+        System.out.println("📝 ENTRADA: " + entrada);
+        System.out.println("────────────────────────────────────────────────────────────────────────────────────────────────────");
+
+// analizador lexico
+        AnalizadorLexicoCompleto lexer = new AnalizadorLexicoCompleto();
+        List<TokenCompleto> tokensRaw = lexer.escanear(entrada);
+        
+// quitar tokens null
+        List<TokenCompleto> tokensAletorios = new ArrayList<>();
+        for (TokenCompleto t : tokensRaw) {
+            tokensAletorios.add(t);
+        }
+
+// analizador sintactico
+        Parser parser = new Parser(tokensAletorios);
+        NodeAsignacionOExpresion ast = parser.parseInstruccion();
+
+// imprimir arbol
+        System.out.println("\n🌳 ÁRBOL SINTÁCTICO:");
+        ast.imprimir();
+
+// generacion de codigo intermedio
+        GeneradorCodigoPila generador = new GeneradorCodigoPila();
+        
+// ast recorrido
+        if (ast.esAsignacion()) {
+            generador.generarCodigo(ast.asignacion);
+        } else {
+            generador.generarCodigo(ast.expresion);
+        }
+        
+// tabla resultado
+        generador.mostrarTablaCodigoIntermedio();
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗");
+        System.out.println("║            ANALIZADOR SINTÁCTICO Y GENERADOR DE CÓDIGO INTERMEDIO (ETAPA 2 DEL COMPILADOR)       ║");
+        System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════╝\n");
+
+// ejemplos
+        
+// ejemplo 1
+        String ecuacion1 = "x + y / (a - b / c) * z + w;";
+        procesarExpresion(ecuacion1);
+        
+// ejemplo 2
+        String ecuacion2 = "a / b + (c * d) - e * f;";
+        procesarExpresion(ecuacion2);
+        
+// ejemplo 3
+        String ecuacion3 = "area = base * altura / 2;";
+        procesarExpresion(ecuacion3);
+        
+// ejemplo 4
+        String ecuacion4 = "resultado = (10 + 20) * (30 - 5) / 10;";
+        procesarExpresion(ecuacion4);
     }
 }
