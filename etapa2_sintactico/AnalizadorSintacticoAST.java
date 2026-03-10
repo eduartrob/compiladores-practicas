@@ -2,18 +2,18 @@
 import java.util.ArrayList;
 import java.util.List;
 
-// Interfaz para todos los nodos del árbol sintáctico (AST)
+// nodos del ast
 abstract class NodoAST {
     public abstract String getValor();
     
-    // Método para imprimir el árbol visualmente (en consola)
+// imprimir en consola
     public abstract void imprimir(String prefijo, boolean esUltimo);
 }
 
-// Nodo que representa un número o un identificador (hoja)
+// hoja de id o num
 class NodoHoja extends NodoAST {
-    String tipo;   // "id" o "num"
-    String lexema; // el valor, ej: "x" o "5"
+    String tipo; 
+    String lexema;
 
     public NodoHoja(String tipo, String lexema) {
         this.tipo = tipo;
@@ -31,10 +31,10 @@ class NodoHoja extends NodoAST {
     }
 }
 
-// Nodo interno que representa una operación (+, -, *, /)
+// operacion matematica
 class NodoOperacion extends NodoAST {
     String operador;
-    String tipoNodo; // 'E', 'T' (de la gramática)
+    String tipoNodo; 
     NodoAST izquierdo;
     NodoAST derecho;
 
@@ -56,21 +56,21 @@ class NodoOperacion extends NodoAST {
         
         String nuevoPrefijo = prefijo + (esUltimo ? "    " : "│   ");
         
-        // Imprimimos primero el sub-árbol izquierdo, luego el operador, luego el derecho
-        // Para simular el dibujo de la libreta, el operador normalmente cuelga del mismo tipoNodo
+// subarbol izquierdo
         if (izquierdo != null) {
             izquierdo.imprimir(nuevoPrefijo, false);
         }
         
         System.out.println(nuevoPrefijo + "├── " + operador);
         
+// subarbol derecho
         if (derecho != null) {
             derecho.imprimir(nuevoPrefijo, true);
         }
     }
 }
 
-// Nodo especial para la asignación (ej: y = x + 5)
+// asignacion
 class NodoAsignacion extends NodoAST {
     NodoHoja variable;
     NodoAST expresion;
@@ -93,7 +93,7 @@ class NodoAsignacion extends NodoAST {
     }
 }
 
-// Analizador Sintáctico por Descenso Recursivo
+// analizador sintactico recursivo
 class Parser {
     private List<TokenCompleto> tokens;
     private int posicionActual;
@@ -103,7 +103,7 @@ class Parser {
         this.posicionActual = 0;
     }
     
-    // Método auxiliar para obtener el token actual
+// obtener token actual
     private TokenCompleto obtenerToken() {
         if (posicionActual < tokens.size()) {
             return tokens.get(posicionActual);
@@ -111,27 +111,27 @@ class Parser {
         return new TokenCompleto("EOF", "");
     }
     
-    // Método auxiliar para consumir un token y avanzar
+// consumir token
     private void consumir() {
         posicionActual++;
     }
     
-    // Iniciar el parseo de una instrucción (esperamos que sea de la forma ID = Expresión ;)
+// parseo de instruccion
     public NodeAsignacionOExpresion parseInstruccion() {
-        // Guardamos el estado actual por si no es asignacion
+// verificamos asignacion
         int inicio = posicionActual;
         
-        // 1. Verificamos si es una asignacion: ID = ...
         if (obtenerToken().tipo.equals("ID")) {
             TokenCompleto idVar = obtenerToken();
-            consumir(); // consumimos ID
+            consumir(); 
             
             if (obtenerToken().tipo.equals("ASIGNA")) {
-                consumir(); // consumimos '='
+                consumir(); 
                 
-                NodoAST expr = parseE(); // Parseamos la expresión aritmética
+// parseamos expresion
+                NodoAST expr = parseE(); 
                 
-                // Ignoramos el ';' final si existe
+// ignoramos fin bateria
                 if (obtenerToken().tipo.equals("FIN_SENTENCIA")) {
                     consumir();
                 }
@@ -142,7 +142,7 @@ class Parser {
             }
         }
         
-        // Si no fue asignación, regresamos y probamos parsear una simple expresión
+// parseamos expresion
         posicionActual = inicio;
         NodoAST expr = parseE();
         
@@ -153,86 +153,73 @@ class Parser {
         return new NodeAsignacionOExpresion(expr);
     }
 
-    // --- REGLAS DE PRODUCCIÓN DE LA GRAMÁTICA ---
-    
-    // E -> E + T | E - T
-    // Se implementa como: E -> T { ( + | - ) T }
+// sumas y restas
     private NodoAST parseE() {
-        NodoAST nodoIzq = parseT(); // T
+        NodoAST nodoIzq = parseT(); 
         
         while (obtenerToken().tipo.equals("OPERA_SUMA") || obtenerToken().tipo.equals("OPERA_RESTA")) {
             TokenCompleto operador = obtenerToken();
-            consumir(); // Consumir + o -
-            NodoAST nodoDer = parseT(); // T
+            consumir(); 
+            NodoAST nodoDer = parseT(); 
             
-            // Construimos el nodo interno 'E'
             nodoIzq = new NodoOperacion("E", operador.lexema, nodoIzq, nodoDer);
         }
         
         return nodoIzq;
     }
     
-    // T -> T * F | T / F
-    // Se implementa como: T -> F { ( * | / ) F }
+// mult y div
     private NodoAST parseT() {
-        NodoAST nodoIzq = parseF(); // F
+        NodoAST nodoIzq = parseF(); 
         
         while (obtenerToken().tipo.equals("OPERA_MULT") || obtenerToken().tipo.equals("OPERA_DIVID")) {
             TokenCompleto operador = obtenerToken();
-            consumir(); // Consumir * o /
-            NodoAST nodoDer = parseF(); // F
+            consumir(); 
+            NodoAST nodoDer = parseF(); 
             
-            // Construimos el nodo interno 'T'
             nodoIzq = new NodoOperacion("T", operador.lexema, nodoIzq, nodoDer);
         }
         
         return nodoIzq;
     }
     
-    // F -> id | num | ( E )
+// id num y parentesis
     private NodoAST parseF() {
         TokenCompleto token = obtenerToken();
         
-        // Caso: Identificador (id)
+// caso id
         if (token.tipo.equals("ID")) {
             consumir();
             return new NodoHoja("id", token.lexema);
         }
         
-        // Caso: Número entero (num)
+// caso num
         if (token.tipo.equals("NUM") || token.tipo.equals("NUM_FLOAT")) {
             consumir();
             return new NodoHoja("num", token.lexema);
         }
         
-        // Caso: Agrupación ( E )
+// caso parentesis
         if (token.tipo.equals("ABRE_PARENTESIS")) {
-            consumir(); // Consumir '('
-            NodoAST nodoExpr = parseE(); // Volver a Expresión
+            consumir(); 
+            NodoAST nodoExpr = parseE(); 
             
             if (obtenerToken().tipo.equals("CIERRA_PARENTESIS")) {
-                consumir(); // Consumir ')'
+                consumir(); 
             } else {
-                System.err.println("Error de sintaxis: Falta paréntesis de cierre ')'");
+                System.err.println("Error de sintaxis: Falta paréntesis");
             }
-            // En nuestra visualización, los paréntesis no los metemos al árbol porque la 
-            // jerarquía ya da el orden. Pero a veces el profesor sí pone un nodo (E).
-            // Para mantener el dibujo original de la libreta, la (E) sí se visualiza muchas veces abajo de F.
-            // Retornaremos un NodoOperacion ficticio o simplemente la rama.
-            // Para hacerlo igual a la foto, devolvamos la rama directamente.
-            
-            // En la foto muestra que bajo F cuelga el paréntesis (E), pero omitiremos el token parentesis 
-            // ya que el árbol sirve para quitar sintaxis innecesaria y mantener la estructura lógica.
+
             return nodoExpr;
         }
         
-        System.err.println("Error de sintaxis: Se esperaba ID, NUM o '('. Encontrado: " + token.tipo + " '" + token.lexema + "'");
-        consumir(); // Consumir token erroneo para evitar ciclo infinito
+        System.err.println("Error sintaxis");
+        consumir(); 
         return new NodoHoja("ERR", "error");
     }
 }
 
-// Wrapper para devolver un AST que puede ser una simple Expresión o una Asignación completa
+// clase wrapper asignacion expresion
 class NodeAsignacionOExpresion {
     NodoAsignacion asignacion;
     NodoAST expresion;

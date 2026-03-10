@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-// Estructura para almacenar una línea de la tabla de código intermedio
+// linea tabla codigo intermedio
 class PasoPila {
     int paso;
     String instruccion;
@@ -21,7 +21,7 @@ class PasoPila {
     }
 }
 
-// Generador de código intermedio (Máquina de pila)
+// generador de codigo intermedio
 class GeneradorCodigoPila {
     private List<PasoPila> pasos;
     private int contadorPasos;
@@ -35,7 +35,7 @@ class GeneradorCodigoPila {
         pilaSimulada = new ArrayList<>();
     }
 
-    // Retorna la representación en string de la pila actual
+// string de pila actual
     private String getEstadoPila() {
         if (pilaSimulada.isEmpty()) return "[]";
         StringBuilder sb = new StringBuilder("[");
@@ -47,12 +47,12 @@ class GeneradorCodigoPila {
         return sb.toString();
     }
 
-    // Agregar un paso a la tabla
+// agregar paso
     private void registrarPaso(String instruccion, String explicacion) {
         pasos.add(new PasoPila(contadorPasos++, instruccion, getEstadoPila(), explicacion));
     }
 
-    // Iniciar la generación de código para un AST
+// iniciar codigo para ast
     public void generarCodigo(NodoAST raiz) {
         pasos.clear();
         contadorPasos = 1;
@@ -61,45 +61,43 @@ class GeneradorCodigoPila {
         
         recorridoPostOrden(raiz);
         
-        // Si el árbol era una asignación, el último paso saca el resultado
-        // En este evaluador de expresiones puras, el final queda en pila
     }
 
-    // Recorrido DFS (Post-Orden) para generar código de pila
+// generar codigo de pila
     private void recorridoPostOrden(NodoAST nodo) {
         if (nodo == null) return;
 
-        // Si es hoja (id o num)
+// si es id o num
         if (nodo instanceof NodoHoja) {
             String valor = nodo.getValor();
-            pilaSimulada.add(valor); // PUSH a la pila
+            pilaSimulada.add(valor); 
             registrarPaso("PUSH " + valor, "Se mete el valor de " + valor);
             return;
         }
 
-        // Si es operación interna
+// operacion
         if (nodo instanceof NodoOperacion) {
             NodoOperacion op = (NodoOperacion) nodo;
             
-            // Primero hijo izquierdo
+// hijo izquierdo
             recorridoPostOrden(op.izquierdo);
             
-            // Luego hijo derecho
+// hijo derecho
             recorridoPostOrden(op.derecho);
             
-            // Finalmente aplicamos la operación
+// aplicar operacion
             aplicarOperacion(op.operador);
             return;
         }
         
-        // Si es asignación completa
+// asignacion completa
         if (nodo instanceof NodoAsignacion) {
             NodoAsignacion asig = (NodoAsignacion) nodo;
             
-            // Evaluamos la expresión de la derecha
+// expresion
             recorridoPostOrden(asig.expresion);
             
-            // Asignamos el resultado a la variable
+// asiga resultado
             String variable = asig.variable.getValor();
             String resultado = pilaSimulada.isEmpty() ? "error" : pilaSimulada.remove(pilaSimulada.size() - 1);
             
@@ -108,14 +106,14 @@ class GeneradorCodigoPila {
         }
     }
 
-    // Ejecuta la operación sacando 2 operandos y metiendo un temporal
+// sacar operandos y meter temporal
     private void aplicarOperacion(String operador) {
         if (pilaSimulada.size() < 2) {
             System.err.println("Error de semántica: Pila mal formada para operación " + operador);
             return;
         }
 
-        // Sacamos los operandos en orden inverso (primero derecho, luego izquierdo)
+// inverse
         String op2 = pilaSimulada.remove(pilaSimulada.size() - 1);
         String op1 = pilaSimulada.remove(pilaSimulada.size() - 1);
         
@@ -145,13 +143,13 @@ class GeneradorCodigoPila {
                 accion = "opera";
         }
 
-        pilaSimulada.add(tResult); // Metemos el temporal (tj) a la pila
+        pilaSimulada.add(tResult); 
         
         String explicacion = String.format("Se sacan %s y %s, se %s (%s)", op1, op2, accion, tResult);
         registrarPaso(instruccion, explicacion);
     }
     
-    // Imprimir la tabla completa
+// imprimir tabla
     public void mostrarTablaCodigoIntermedio() {
         System.out.println("\n╔══════════════════════════════════════════════════════════════════════════════════════════════════╗");
         System.out.println("║                        TABLA DE CÓDIGO INTERMEDIO (MÁQUINA DE PILA)                              ║");
@@ -160,7 +158,6 @@ class GeneradorCodigoPila {
         System.out.println("╠══════╬══════════════╬══════════════════════╬═════════════════════════════════════════════════════╣");
         
         for (PasoPila p : pasos) {
-            // Un pequeño padding para que se vea como tabla
             System.out.printf("║ %-4d ║ %-12s ║ %-20s ║ %-51s ║\n", p.paso, p.instruccion, p.estadoPila, p.explicacion);
         }
         
