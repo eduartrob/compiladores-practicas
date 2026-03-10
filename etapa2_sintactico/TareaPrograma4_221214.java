@@ -833,7 +833,7 @@ class GeneradorCodigoPila {
 }
 
 
-public class AnalizadorSintactico {
+public class TareaPrograma4_221214 {
 
     public static void procesarExpresion(String entrada) {
         System.out.println("════════════════════════════════════════════════════════════════════════════════════════════════════");
