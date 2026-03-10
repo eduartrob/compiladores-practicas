@@ -1,10 +1,18 @@
 # Compiladores e Intérpretes - Prácticas
 
-Este repositorio contiene las tareas y programas desarrollados para la materia de **Compiladores e Intérpretes**.
+Este repositorio contiene las tareas y programas desarrollados para la materia de **Compiladores e Intérpretes**. Se encuentra estructurado en carpetas según el avance del curso.
 
-## 📁 Contenido
+## 📁 Estructura del Repositorio
 
-### Tarea Programa 1 - Analizador Léxico con Decimales
+- `practicas/` - Prácticas y tareas iniciales de analizadores básicos.
+- `etapa1_lexico/` - Analizador Léxico Completo finalizado.
+- `etapa2_sintactico/` - Analizador Sintáctico y Generador de Código de Pila.
+
+---
+
+### Prácticas (Carpeta `practicas/`)
+
+#### Tarea Programa 1 - Analizador Léxico con Decimales
 **Archivo:** `TareaPrograma1_221214.java`
 
 Implementación de un analizador léxico que reconoce:
@@ -35,8 +43,8 @@ Extensión del analizador léxico para permitir que los identificadores:
 
 ---
 
-### Etapa 1 - Analizador Léxico Completo
-**Archivo:** `AnalizadorLexicoCompleto.java`
+### Etapa 1 - Analizador Léxico Completo (Carpeta `etapa1_lexico/`)
+**Archivo principal:** `AnalizadorLexicoCompleto.java`
 
 Analizador léxico completo que reconoce todos los tokens necesarios para un compilador:
 
@@ -48,28 +56,39 @@ Analizador léxico completo que reconoce todos los tokens necesarios para un com
 | Cadenas | `CADENA` |
 | Delimitadores | `FIN_SENTENCIA`, `INI_BLOQUE`, `FIN_BLOQUE`, `ABRE_PARENTESIS`, `CIERRA_PARENTESIS` |
 | Operadores matemáticos | `OPERA_SUMA`, `OPERA_RESTA`, `OPERA_MULT`, `OPERA_DIVID`, `ASIGNA` |
+| Operadores de comparación | `OPERA_MAYOR`, `OPERA_MENOR`, `OPERA_IGUALDAD`, `OPERA_DIFERENTE`, `OPERA_MAYOR_IGUAL`, `OPERA_MENOR_IGUAL` |
 | Operadores lógicos | `OPERA_AND`, `OPERA_OR`, `OPERA_NOT` |
+
+---
+
+### Etapa 2 - Analizador Sintáctico y Máquina de Pila (Carpeta `etapa2_sintactico/`)
+**Archivo principal:** `AnalizadorSintactico.java`
+
+Procesa sentencias y expresiones de asignación generando:
+1. **Árbol de Sintaxis Abstracta (AST)**: Utilizando un *Parser* de Descenso Recursivo imprimiendo la jerarquía en consola.
+2. **Máquina de Pila (Código Intermedio)**: Generado a través de un recorrido en *Post-Orden* (Izquierda, Derecha, Raíz) emitiendo una tabla estructurada (Paso, Instrucción, Pila, Explicación), con las instrucciones `PUSH`, `ADD`, `SUB`, `MUL`, `DIV`, y `POP`.
 
 ---
 
 ## 🚀 Cómo ejecutar
 
 ```bash
-# Tarea 1
-javac TareaPrograma1_221214.java
-java TareaPrograma1_221214
+# Entrar a la carpeta deseada, por ejemplo:
+cd practicas/
 
-# Tarea 2
-javac TareaPrograma2_221214.java
-java TareaPrograma2_221214
-
-# Tarea 3
+# Ejecutar Tarea 3
 javac TareaPrograma3_221214.java
 java TareaPrograma3_221214
 
-# Etapa 1 - Analizador Léxico Completo
+# --- Etapa 1 ---
+cd ../etapa1_lexico/
 javac AnalizadorLexicoCompleto.java
 java AnalizadorLexicoCompleto
+
+# --- Etapa 2 ---
+cd ../etapa2_sintactico/
+javac AnalizadorLexicoCompleto.java AnalizadorSintacticoAST.java GeneradorCodigoAST.java AnalizadorSintactico.java
+java AnalizadorSintactico
 ```
 
 ## 📊 Tabla de Transiciones

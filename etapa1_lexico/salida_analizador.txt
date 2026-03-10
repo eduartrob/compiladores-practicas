@@ -1,0 +1,567 @@
+════════════════════════════════════════════════════════════════════════
+          ANALIZADOR LÉXICO COMPLETO - ETAPA 1 DEL COMPILADOR          
+════════════════════════════════════════════════════════════════════════
+
+CÓDIGO FUENTE DE ENTRADA:
+────────────────────────────────────────────────────────────────────────
+public class Main {
+    static void main() {
+        int x = 100;
+        long grande = 999999;
+        float precio = 3.14;
+        double pi = 3.14159;
+        char letra = "a";
+        boolean activo = true;
+        string nombre = "Eduardo";
+        local_date fecha;
+        local_time hora;
+
+        if (x > 0) then {
+            y = x + 5;
+            z = y * 2;
+        } else {
+            y = 0;
+        }
+
+        while (contador < 10) do {
+            suma = suma + 1;
+            resta = suma - 1;
+            mult = resta * 2;
+            div = mult / 2;
+        }
+
+        for (i = 0; i < 100; i = i + 1) {
+            total = total + i;
+        }
+
+        switch (opcion) {
+            case 1;
+                break;
+        }
+
+        if (x >= 10 and y <= 20) then {
+            resultado = x;
+        }
+
+        if (x != y or not activo) then {
+            continue;
+        }
+
+        if (a == b) then {
+            return a;
+        }
+
+        Persona p = new Persona();
+    }
+}
+
+────────────────────────────────────────────────────────────────────────
+
+════════════════════════════════════════════════════════════════════════
+                         TOKENS ENCONTRADOS                             
+════════════════════════════════════════════════════════════════════════
+
+─── PALABRAS RESERVADAS ───
+  KEY_PUBLIC             ( public )
+  KEY_CLASS              ( class )
+  KEY_STATIC             ( static )
+  KEY_VOID               ( void )
+  KEY_MAIN               ( main )
+  KEY_INT                ( int )
+  KEY_LONG               ( long )
+  KEY_FLOAT              ( float )
+  KEY_DOUBLE             ( double )
+  KEY_CHAR               ( char )
+  KEY_BOOLEAN            ( boolean )
+  KEY_TRUE               ( true )
+  KEY_STRING             ( string )
+  KEY_LOCAL_DATE         ( local_date )
+  KEY_LOCAL_TIME         ( local_time )
+  KEY_IF                 ( if )
+  KEY_THEN               ( then )
+  KEY_ELSE               ( else )
+  KEY_WHILE              ( while )
+  KEY_DO                 ( do )
+  KEY_FOR                ( for )
+  KEY_SWITCH             ( switch )
+  KEY_CASE               ( case )
+  KEY_BREAK              ( break )
+  KEY_IF                 ( if )
+  KEY_THEN               ( then )
+  KEY_IF                 ( if )
+  KEY_THEN               ( then )
+  KEY_CONTINUE           ( continue )
+  KEY_IF                 ( if )
+  KEY_THEN               ( then )
+  KEY_RETURN             ( return )
+  KEY_NEW                ( new )
+
+─── IDENTIFICADORES ───
+  ID                     ( Main )
+  ID                     ( x )
+  ID                     ( grande )
+  ID                     ( precio )
+  ID                     ( pi )
+  ID                     ( letra )
+  ID                     ( activo )
+  ID                     ( nombre )
+  ID                     ( fecha )
+  ID                     ( hora )
+  ID                     ( x )
+  ID                     ( y )
+  ID                     ( x )
+  ID                     ( z )
+  ID                     ( y )
+  ID                     ( y )
+  ID                     ( contador )
+  ID                     ( suma )
+  ID                     ( suma )
+  ID                     ( resta )
+  ID                     ( suma )
+  ID                     ( mult )
+  ID                     ( resta )
+  ID                     ( div )
+  ID                     ( mult )
+  ID                     ( i )
+  ID                     ( i )
+  ID                     ( i )
+  ID                     ( i )
+  ID                     ( total )
+  ID                     ( total )
+  ID                     ( i )
+  ID                     ( opcion )
+  ID                     ( x )
+  ID                     ( y )
+  ID                     ( resultado )
+  ID                     ( x )
+  ID                     ( x )
+  ID                     ( y )
+  ID                     ( activo )
+  ID                     ( a )
+  ID                     ( b )
+  ID                     ( a )
+  ID                     ( Persona )
+  ID                     ( p )
+  ID                     ( Persona )
+
+─── NÚMEROS ───
+  NUM                    ( 100 )
+  NUM                    ( 999999 )
+  NUM_FLOAT              ( 3.14 )
+  NUM_FLOAT              ( 3.14159 )
+  NUM                    ( 0 )
+  NUM                    ( 5 )
+  NUM                    ( 2 )
+  NUM                    ( 0 )
+  NUM                    ( 10 )
+  NUM                    ( 1 )
+  NUM                    ( 1 )
+  NUM                    ( 2 )
+  NUM                    ( 2 )
+  NUM                    ( 0 )
+  NUM                    ( 100 )
+  NUM                    ( 1 )
+  NUM                    ( 1 )
+  NUM                    ( 10 )
+  NUM                    ( 20 )
+
+─── CADENAS ───
+  CADENA                 ( "a" )
+  CADENA                 ( "Eduardo" )
+
+─── DELIMITADORES ───
+  INI_BLOQUE             ( { )
+  ABRE_PARENTESIS        ( ( )
+  CIERRA_PARENTESIS      ( ) )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  ABRE_PARENTESIS        ( ( )
+  CIERRA_PARENTESIS      ( ) )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  ABRE_PARENTESIS        ( ( )
+  CIERRA_PARENTESIS      ( ) )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  ABRE_PARENTESIS        ( ( )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  CIERRA_PARENTESIS      ( ) )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  ABRE_PARENTESIS        ( ( )
+  CIERRA_PARENTESIS      ( ) )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  ABRE_PARENTESIS        ( ( )
+  CIERRA_PARENTESIS      ( ) )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  ABRE_PARENTESIS        ( ( )
+  CIERRA_PARENTESIS      ( ) )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  ABRE_PARENTESIS        ( ( )
+  CIERRA_PARENTESIS      ( ) )
+  INI_BLOQUE             ( { )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  ABRE_PARENTESIS        ( ( )
+  CIERRA_PARENTESIS      ( ) )
+  FIN_SENTENCIA          ( ; )
+  FIN_BLOQUE             ( } )
+  FIN_BLOQUE             ( } )
+
+─── ASIGNACIÓN ───
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+  ASIGNA                 ( = )
+
+─── OPERADORES MATEMÁTICOS ───
+  OPERA_SUMA             ( + )
+  OPERA_MULT             ( * )
+  OPERA_SUMA             ( + )
+  OPERA_RESTA            ( - )
+  OPERA_MULT             ( * )
+  OPERA_DIVID            ( / )
+  OPERA_SUMA             ( + )
+  OPERA_SUMA             ( + )
+
+─── OPERADORES DE COMPARACIÓN ───
+  OPERA_MAYOR            ( > )
+  OPERA_MENOR            ( < )
+  OPERA_MENOR            ( < )
+  OPERA_MAYOR_IGUAL      ( >= )
+  OPERA_MENOR_IGUAL      ( <= )
+  OPERA_DIFERENTE        ( != )
+  OPERA_IGUALDAD         ( == )
+
+─── OPERADORES LÓGICOS ───
+  OPERA_AND              ( and )
+  OPERA_OR               ( or )
+  OPERA_NOT              ( not )
+
+════════════════════════════════════════════════════════════════════════
+                    SECUENCIA DE TOKENS (en orden)                      
+════════════════════════════════════════════════════════════════════════
+  1. KEY_PUBLIC             ( public )
+  2. KEY_CLASS              ( class )
+  3. ID                     ( Main )
+  4. INI_BLOQUE             ( { )
+  5. KEY_STATIC             ( static )
+  6. KEY_VOID               ( void )
+  7. KEY_MAIN               ( main )
+  8. ABRE_PARENTESIS        ( ( )
+  9. CIERRA_PARENTESIS      ( ) )
+ 10. INI_BLOQUE             ( { )
+ 11. KEY_INT                ( int )
+ 12. ID                     ( x )
+ 13. ASIGNA                 ( = )
+ 14. NUM                    ( 100 )
+ 15. FIN_SENTENCIA          ( ; )
+ 16. KEY_LONG               ( long )
+ 17. ID                     ( grande )
+ 18. ASIGNA                 ( = )
+ 19. NUM                    ( 999999 )
+ 20. FIN_SENTENCIA          ( ; )
+ 21. KEY_FLOAT              ( float )
+ 22. ID                     ( precio )
+ 23. ASIGNA                 ( = )
+ 24. NUM_FLOAT              ( 3.14 )
+ 25. FIN_SENTENCIA          ( ; )
+ 26. KEY_DOUBLE             ( double )
+ 27. ID                     ( pi )
+ 28. ASIGNA                 ( = )
+ 29. NUM_FLOAT              ( 3.14159 )
+ 30. FIN_SENTENCIA          ( ; )
+ 31. KEY_CHAR               ( char )
+ 32. ID                     ( letra )
+ 33. ASIGNA                 ( = )
+ 34. CADENA                 ( "a" )
+ 35. FIN_SENTENCIA          ( ; )
+ 36. KEY_BOOLEAN            ( boolean )
+ 37. ID                     ( activo )
+ 38. ASIGNA                 ( = )
+ 39. KEY_TRUE               ( true )
+ 40. FIN_SENTENCIA          ( ; )
+ 41. KEY_STRING             ( string )
+ 42. ID                     ( nombre )
+ 43. ASIGNA                 ( = )
+ 44. CADENA                 ( "Eduardo" )
+ 45. FIN_SENTENCIA          ( ; )
+ 46. KEY_LOCAL_DATE         ( local_date )
+ 47. ID                     ( fecha )
+ 48. FIN_SENTENCIA          ( ; )
+ 49. KEY_LOCAL_TIME         ( local_time )
+ 50. ID                     ( hora )
+ 51. FIN_SENTENCIA          ( ; )
+ 52. KEY_IF                 ( if )
+ 53. ABRE_PARENTESIS        ( ( )
+ 54. ID                     ( x )
+ 55. OPERA_MAYOR            ( > )
+ 56. NUM                    ( 0 )
+ 57. CIERRA_PARENTESIS      ( ) )
+ 58. KEY_THEN               ( then )
+ 59. INI_BLOQUE             ( { )
+ 60. ID                     ( y )
+ 61. ASIGNA                 ( = )
+ 62. ID                     ( x )
+ 63. OPERA_SUMA             ( + )
+ 64. NUM                    ( 5 )
+ 65. FIN_SENTENCIA          ( ; )
+ 66. ID                     ( z )
+ 67. ASIGNA                 ( = )
+ 68. ID                     ( y )
+ 69. OPERA_MULT             ( * )
+ 70. NUM                    ( 2 )
+ 71. FIN_SENTENCIA          ( ; )
+ 72. FIN_BLOQUE             ( } )
+ 73. KEY_ELSE               ( else )
+ 74. INI_BLOQUE             ( { )
+ 75. ID                     ( y )
+ 76. ASIGNA                 ( = )
+ 77. NUM                    ( 0 )
+ 78. FIN_SENTENCIA          ( ; )
+ 79. FIN_BLOQUE             ( } )
+ 80. KEY_WHILE              ( while )
+ 81. ABRE_PARENTESIS        ( ( )
+ 82. ID                     ( contador )
+ 83. OPERA_MENOR            ( < )
+ 84. NUM                    ( 10 )
+ 85. CIERRA_PARENTESIS      ( ) )
+ 86. KEY_DO                 ( do )
+ 87. INI_BLOQUE             ( { )
+ 88. ID                     ( suma )
+ 89. ASIGNA                 ( = )
+ 90. ID                     ( suma )
+ 91. OPERA_SUMA             ( + )
+ 92. NUM                    ( 1 )
+ 93. FIN_SENTENCIA          ( ; )
+ 94. ID                     ( resta )
+ 95. ASIGNA                 ( = )
+ 96. ID                     ( suma )
+ 97. OPERA_RESTA            ( - )
+ 98. NUM                    ( 1 )
+ 99. FIN_SENTENCIA          ( ; )
+100. ID                     ( mult )
+101. ASIGNA                 ( = )
+102. ID                     ( resta )
+103. OPERA_MULT             ( * )
+104. NUM                    ( 2 )
+105. FIN_SENTENCIA          ( ; )
+106. ID                     ( div )
+107. ASIGNA                 ( = )
+108. ID                     ( mult )
+109. OPERA_DIVID            ( / )
+110. NUM                    ( 2 )
+111. FIN_SENTENCIA          ( ; )
+112. FIN_BLOQUE             ( } )
+113. KEY_FOR                ( for )
+114. ABRE_PARENTESIS        ( ( )
+115. ID                     ( i )
+116. ASIGNA                 ( = )
+117. NUM                    ( 0 )
+118. FIN_SENTENCIA          ( ; )
+119. ID                     ( i )
+120. OPERA_MENOR            ( < )
+121. NUM                    ( 100 )
+122. FIN_SENTENCIA          ( ; )
+123. ID                     ( i )
+124. ASIGNA                 ( = )
+125. ID                     ( i )
+126. OPERA_SUMA             ( + )
+127. NUM                    ( 1 )
+128. CIERRA_PARENTESIS      ( ) )
+129. INI_BLOQUE             ( { )
+130. ID                     ( total )
+131. ASIGNA                 ( = )
+132. ID                     ( total )
+133. OPERA_SUMA             ( + )
+134. ID                     ( i )
+135. FIN_SENTENCIA          ( ; )
+136. FIN_BLOQUE             ( } )
+137. KEY_SWITCH             ( switch )
+138. ABRE_PARENTESIS        ( ( )
+139. ID                     ( opcion )
+140. CIERRA_PARENTESIS      ( ) )
+141. INI_BLOQUE             ( { )
+142. KEY_CASE               ( case )
+143. NUM                    ( 1 )
+144. FIN_SENTENCIA          ( ; )
+145. KEY_BREAK              ( break )
+146. FIN_SENTENCIA          ( ; )
+147. FIN_BLOQUE             ( } )
+148. KEY_IF                 ( if )
+149. ABRE_PARENTESIS        ( ( )
+150. ID                     ( x )
+151. OPERA_MAYOR_IGUAL      ( >= )
+152. NUM                    ( 10 )
+153. OPERA_AND              ( and )
+154. ID                     ( y )
+155. OPERA_MENOR_IGUAL      ( <= )
+156. NUM                    ( 20 )
+157. CIERRA_PARENTESIS      ( ) )
+158. KEY_THEN               ( then )
+159. INI_BLOQUE             ( { )
+160. ID                     ( resultado )
+161. ASIGNA                 ( = )
+162. ID                     ( x )
+163. FIN_SENTENCIA          ( ; )
+164. FIN_BLOQUE             ( } )
+165. KEY_IF                 ( if )
+166. ABRE_PARENTESIS        ( ( )
+167. ID                     ( x )
+168. OPERA_DIFERENTE        ( != )
+169. ID                     ( y )
+170. OPERA_OR               ( or )
+171. OPERA_NOT              ( not )
+172. ID                     ( activo )
+173. CIERRA_PARENTESIS      ( ) )
+174. KEY_THEN               ( then )
+175. INI_BLOQUE             ( { )
+176. KEY_CONTINUE           ( continue )
+177. FIN_SENTENCIA          ( ; )
+178. FIN_BLOQUE             ( } )
+179. KEY_IF                 ( if )
+180. ABRE_PARENTESIS        ( ( )
+181. ID                     ( a )
+182. OPERA_IGUALDAD         ( == )
+183. ID                     ( b )
+184. CIERRA_PARENTESIS      ( ) )
+185. KEY_THEN               ( then )
+186. INI_BLOQUE             ( { )
+187. KEY_RETURN             ( return )
+188. ID                     ( a )
+189. FIN_SENTENCIA          ( ; )
+190. FIN_BLOQUE             ( } )
+191. ID                     ( Persona )
+192. ID                     ( p )
+193. ASIGNA                 ( = )
+194. KEY_NEW                ( new )
+195. ID                     ( Persona )
+196. ABRE_PARENTESIS        ( ( )
+197. CIERRA_PARENTESIS      ( ) )
+198. FIN_SENTENCIA          ( ; )
+199. FIN_BLOQUE             ( } )
+200. FIN_BLOQUE             ( } )
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                         TABLA DE SÍMBOLOS                           ║
+╠═════╦══════════════════════╦════════════════════╦═════════════════════╣
+║ ID  ║       NOMBRE         ║        TIPO        ║       VALOR         ║
+╠═════╬══════════════════════╬════════════════════╬═════════════════════╣
+|   1 | if                   | KEY_IF             | -               |
+|   2 | then                 | KEY_THEN           | -               |
+|   3 | else                 | KEY_ELSE           | -               |
+|   4 | case                 | KEY_CASE           | -               |
+|   5 | do                   | KEY_DO             | -               |
+|   6 | while                | KEY_WHILE          | -               |
+|   7 | switch               | KEY_SWITCH         | -               |
+|   8 | break                | KEY_BREAK          | -               |
+|   9 | for                  | KEY_FOR            | -               |
+|  10 | continue             | KEY_CONTINUE       | -               |
+|  11 | return               | KEY_RETURN         | -               |
+|  12 | class                | KEY_CLASS          | -               |
+|  13 | new                  | KEY_NEW            | -               |
+|  14 | interface            | KEY_INTERFACE      | -               |
+|  15 | package              | KEY_PACKAGE        | -               |
+|  16 | public               | KEY_PUBLIC         | -               |
+|  17 | private              | KEY_PRIVATE        | -               |
+|  18 | static               | KEY_STATIC         | -               |
+|  19 | final                | KEY_FINAL          | -               |
+|  20 | void                 | KEY_VOID           | -               |
+|  21 | main                 | KEY_MAIN           | -               |
+|  22 | int                  | KEY_INT            | -               |
+|  23 | long                 | KEY_LONG           | -               |
+|  24 | float                | KEY_FLOAT          | -               |
+|  25 | double               | KEY_DOUBLE         | -               |
+|  26 | char                 | KEY_CHAR           | -               |
+|  27 | boolean              | KEY_BOOLEAN        | -               |
+|  28 | string               | KEY_STRING         | -               |
+|  29 | local_date           | KEY_LOCAL_DATE     | -               |
+|  30 | local_time           | KEY_LOCAL_TIME     | -               |
+|  31 | bool                 | KEY_BOOL           | -               |
+|  32 | date                 | KEY_DATE           | -               |
+|  33 | true                 | KEY_TRUE           | -               |
+|  34 | false                | KEY_FALSE          | -               |
+|  35 | and                  | OPERA_AND          | -               |
+|  36 | or                   | OPERA_OR           | -               |
+|  37 | not                  | OPERA_NOT          | -               |
+|  38 | Main                 | ID                 | -               |
+|  39 | x                    | ID                 | -               |
+|  40 | 100                  | NUM                | 100             |
+|  41 | grande               | ID                 | -               |
+|  42 | 999999               | NUM                | 999999          |
+|  43 | precio               | ID                 | -               |
+|  44 | 3.14                 | NUM_FLOAT          | 3.14            |
+|  45 | pi                   | ID                 | -               |
+|  46 | 3.14159              | NUM_FLOAT          | 3.14159         |
+|  47 | letra                | ID                 | -               |
+|  48 | "a"                  | CADENA             | "a"             |
+|  49 | activo               | ID                 | -               |
+|  50 | nombre               | ID                 | -               |
+|  51 | "Eduardo"            | CADENA             | "Eduardo"       |
+|  52 | fecha                | ID                 | -               |
+|  53 | hora                 | ID                 | -               |
+|  54 | 0                    | NUM                | 0               |
+|  55 | y                    | ID                 | -               |
+|  56 | 5                    | NUM                | 5               |
+|  57 | z                    | ID                 | -               |
+|  58 | 2                    | NUM                | 2               |
+|  59 | contador             | ID                 | -               |
+|  60 | 10                   | NUM                | 10              |
+|  61 | suma                 | ID                 | -               |
+|  62 | 1                    | NUM                | 1               |
+|  63 | resta                | ID                 | -               |
+|  64 | mult                 | ID                 | -               |
+|  65 | div                  | ID                 | -               |
+|  66 | i                    | ID                 | -               |
+|  67 | total                | ID                 | -               |
+|  68 | opcion               | ID                 | -               |
+|  69 | 20                   | NUM                | 20              |
+|  70 | resultado            | ID                 | -               |
+|  71 | a                    | ID                 | -               |
+|  72 | b                    | ID                 | -               |
+|  73 | Persona              | ID                 | -               |
+|  74 | p                    | ID                 | -               |
+╚═════╩══════════════════════╩════════════════════╩═════════════════════╝
+
+Análisis léxico completado. Total de tokens: 200
